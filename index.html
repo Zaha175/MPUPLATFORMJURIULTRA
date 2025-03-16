@@ -2,481 +2,1084 @@
 <html lang="de">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MPU Plattform - Prototyp</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    /* Stiluri generale */
-    body {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      color: #333;
-      transition: background-color 0.3s, color 0.3s ease-in-out;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPU PLATFORM PRO</title>
+    <meta name="description" content="MPU Plattform zur Vorbereitung auf die Medizinisch-Psychologische Untersuchung. Mit Tests, Quiz, Rechner und KI-Assistent.">
+    <meta name="keywords" content="MPU, Medizinisch-Psychologische Untersuchung, Vorbereitung, Test, Quiz, Promillerechner, KI-Assistent">
+    <meta name="robots" content="index, follow">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Allgemeine Styles */
+        :root {
+            --primary-color: #003366;
+            --primary-dark: #002244;
+            --primary-darker: #001122;
+            --primary-light: #004488;
+            --accent-color: #FFD700;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --bg-light: #ffffff;
+            --bg-dark: #121212;
+            --description-light: #f5f5f5;
+            --description-dark: #1e1e1e;
+            --transition-speed: 0.3s;
+            --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            --box-shadow-hover: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
 
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('https://i.imgur.com/IyXnm6Y.jpeg');
-      background-size: cover;
-      background-position: center;
-      z-index: -1;
-      opacity: 1;
-      transition: opacity 0.3s ease-in-out;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body.dark-mode {
-      background-color: #121212;
-      color: #e0e0e0;
-    }
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-dark);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            background-color: var(--bg-light);
+            overflow-x: hidden;
+        }
 
-    body.dark-mode::before {
-      opacity: 0.3;
-    }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://cdn.gamma.app/fhpleqvbjim2f32/generated-images/m5jbKxn54d6Q01a4tMJgN.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+            opacity: 0.05;
+            transition: opacity var(--transition-speed);
+        }
 
-    /* Container für die gesamte Seite */
-    .container {
-      width: 90%;
-      max-width: 1400px;
-      margin: 0 auto;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-    }
+        body.dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
 
-    header {
-      background-color: #003366;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-      font-size: 1.5rem;
-      transition: background-color 0.3s;
-    }
+        body.dark-mode::before {
+            opacity: 0.1;
+        }
 
-    body.dark-mode header {
-      background-color: #1a1a1a;
-    }
+        /* Progress Bar - Neu */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
 
-    main {
-      display: flex;
-      gap: 20px;
-      padding: 20px;
-      flex-grow: 1;
-    }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
 
-    .menu-container {
-      width: 300px;
-    }
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1.2rem;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            position: relative;
+            box-shadow: var(--box-shadow);
+            transition: background-color var(--transition-speed);
+            z-index: 10;
+            border-bottom: 4px solid rgba(255, 215, 0, 0.5);
+        }
 
-    .menu-item {
-      padding: 15px 20px;
-      background-color: #003366;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: bold;
-      width: 100%;
-      text-align: center;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
+        body.dark-mode header {
+            background-color: #001a33;
+            border-bottom: 4px solid rgba(255, 215, 0, 0.3);
+        }
 
-    .menu-item.active {
-      background-color: #FFCC00;
-      color: #333;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      transform: scale(1.05);
-    }
+        /* Container */
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .menu-item:hover {
-      background-color: #002244;
-      transform: scale(1.05);
-    }
+        main {
+            display: flex;
+            gap: 25px;
+            padding: 25px 15px;
+            flex-grow: 1;
+        }
 
-    .content-container {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        /* Sidebar Menu */
+        .menu-container {
+            width: 300px;
+            position: sticky;
+            top: 25px;
+            height: fit-content;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            padding: 15px;
+            transition: transform var(--transition-speed), background-color var(--transition-speed);
+        }
 
-    .description {
-      background-color: #ffffcc;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-      display: none;
-      width: 100%;
-      max-width: 800px;
-      box-sizing: border-box;
-      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-    }
+        body.dark-mode .menu-container {
+            background-color: rgba(30, 30, 30, 0.85);
+        }
 
-    body.dark-mode .description {
-      background: #1e1e1e;
-      border-color: #444;
-      color: #e0e0e0;
-    }
+        .menu-item {
+            padding: 15px 20px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+            transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            border-bottom: 3px solid var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .description.active {
-      display: block;
-    }
+        .menu-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
 
-    .dark-mode-toggle {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #343a40;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      text-transform: uppercase;
-    }
+        .menu-item.active {
+            background-color: var(--accent-color);
+            color: var(--primary-darker);
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow-hover);
+            border-bottom: 3px solid #e5c100;
+        }
 
-    body.dark-mode .dark-mode-toggle {
-      background-color: #1a1a1a;
-    }
+        .menu-item:hover:not(.active) {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow-hover);
+        }
 
-    .dark-mode-toggle:hover {
-      background-color: #23272b;
-      color: #FFD700;
-      transform: scale(1.1);
-    }
+        /* Content Area */
+        .content-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 70vh;
+        }
 
-    .button-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      max-width: 400px;
-    }
+        .description {
+            background-color: var(--description-light);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 25px;
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            box-sizing: border-box;
+            transition: background-color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.4s forwards;
+        }
 
-    .button {
-      width: 100%;
-      padding: 15px;
-      font-size: 1rem;
-      font-weight: bold;
-      border: none;
-      background-color: #002244;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
-      box-sizing: border-box;
-    }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    .button:hover {
-      background-color: #001122;
-      transform: scale(1.05);
-    }
+        body.dark-mode .description {
+            background-color: var(--description-dark);
+            color: var(--text-light);
+            border: 1px solid #333;
+        }
 
-    iframe {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 16 / 9;
-      max-width: 800px;
-      margin-bottom: 20px;
-    }
+        .description.active {
+            display: block;
+        }
 
-    /* Media Queries */
-    @media (max-width: 768px) {
-      main {
-        flex-direction: column;
-      }
+        .description h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            text-align: center;
+        }
 
-      .menu-container {
-        width: 100%;
-      }
+        body.dark-mode .description h3 {
+            color: var(--accent-color);
+        }
 
-      .content-container {
-        padding: 10px;
-        align-items: stretch;
-      }
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: var(--text-light);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+            z-index: 100;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-      .description {
-        width: 100%;
-      }
+        .dark-mode-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            transform: scale(1.05);
+        }
 
-      .button-container {
-        max-width: 100%;
-      }
-    }
+        body.dark-mode .dark-mode-toggle {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
 
-    /* Chatbot Widget */
-    #chatbot-widget {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9999;
-    }
+        body.dark-mode .dark-mode-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
 
-    #chatbot-toggle {
-      background-color: #003366;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      font-size: 14px;
-      transition: background-color 0.3s, transform 0.2s;
-    }
+        /* Buttons */
+        .button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: var(--box-shadow);
+            border-bottom: 3px solid var(--primary-darker);
+            max-width: 450px;
+            margin: 10px auto;
+        }
 
-    #chatbot-toggle:hover {
-      background-color: #002244;
-      transform: scale(1.1);
-    }
+        .button:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow-hover);
+        }
 
-    #chatbot-container {
-      display: none;
-      position: fixed;
-      bottom: 70px;
-      right: 20px;
-      width: 350px;
-      height: 500px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
+        .button:active {
+            transform: translateY(-1px);
+        }
 
-    #chatbot-container iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      border-radius: 10px;
-    }
+        /* iframes */
+        iframe {
+            width: 100%;
+            height: 450px;
+            max-width: 850px;
+            margin: 20px 0;
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            transition: box-shadow var(--transition-speed), transform var(--transition-speed);
+        }
 
-    /* Chatbot Interface */
-    #chatbot-container {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      width: 350px;
-      height: 500px;
-      position: fixed;
-      bottom: 70px;
-      right: 20px;
-      z-index: 9999;
-    }
+        iframe:hover {
+            box-shadow: var(--box-shadow-hover);
+        }
 
-    #chat-response {
-      width: 100%;
-      height: 300px;
-      overflow-y: auto;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 10px;
-      margin-bottom: 10px;
-      background: #fff;
-      color: #333;
-    }
+        /* Chatbot Widget */
+        #chatbot-widget {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 9999;
+        }
 
-    #chat-input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
+        #chatbot-toggle {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--box-shadow);
+            font-size: 1rem;
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    #send-btn {
-      width: 100%;
-      padding: 10px;
-      background-color: #003366;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
+        #chatbot-toggle:hover {
+            background-color: var(--primary-light);
+            transform: scale(1.05);
+            box-shadow: var(--box-shadow-hover);
+        }
 
-    #send-btn:hover {
-      background-color: #002244;
-    }
-  </style>
+        #chatbot-container {
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: var(--box-shadow-hover);
+            width: 350px;
+            height: 500px;
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            z-index: 9999;
+            overflow: hidden;
+            transition: transform var(--transition-speed), opacity var(--transition-speed);
+            transform-origin: bottom right;
+            animation: chatbotFadeIn 0.3s forwards;
+        }
+
+        @keyframes chatbotFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        body.dark-mode #chatbot-container {
+            background: #222;
+            border: 1px solid #444;
+        }
+
+        #chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        body.dark-mode #chat-header {
+            border-bottom: 1px solid #444;
+        }
+
+        #chat-header h3 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        body.dark-mode #chat-header h3 {
+            color: var(--accent-color);
+        }
+
+        #close-chat {
+            background: none;
+            border: none;
+            color: #777;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color var(--transition-speed);
+        }
+
+        #close-chat:hover {
+            color: #333;
+        }
+
+        body.dark-mode #close-chat {
+            color: #aaa;
+        }
+
+        body.dark-mode #close-chat:hover {
+            color: #fff;
+        }
+
+        #chat-response {
+            width: 100%;
+            height: 330px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        body.dark-mode #chat-response {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: var(--text-light);
+        }
+
+        #chat-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        #chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.2);
+        }
+
+        body.dark-mode #chat-input {
+            background: #333;
+            border: 1px solid #444;
+            color: var(--text-light);
+        }
+
+        #send-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #send-btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        #send-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Images */
+        .description img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 15px 0;
+            box-shadow: var(--box-shadow);
+        }
+
+        /* Lists */
+        .description ul {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .description li {
+            margin-bottom: 8px;
+        }
+
+        /* Back to Top Button - Neu */
+        .back-to-top {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity var(--transition-speed), background-color var(--transition-speed), transform var(--transition-speed);
+            box-shadow: var(--box-shadow);
+            z-index: 99;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow-hover);
+        }
+
+        /* Media Queries */
+        @media (max-width: 1100px) {
+            main {
+                gap: 20px;
+                padding: 20px 10px;
+            }
+
+            .menu-container {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            main {
+                flex-direction: column;
+            }
+
+            .menu-container {
+                width: 100%;
+                position: relative;
+                top: 0;
+                margin-bottom: 20px;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                padding: 15px;
+            }
+
+            .menu-item {
+                margin-bottom: 0;
+                height: 60px;
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+
+            .menu-item i {
+                margin-right: 6px;
+                font-size: 1rem;
+            }
+
+            .button {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                font-size: 1.5rem;
+                padding: 1rem;
+            }
+
+            .menu-container {
+                grid-template-columns: 1fr;
+            }
+
+            .description {
+                padding: 15px;
+            }
+
+            iframe {
+                height: 350px;
+            }
+
+            .dark-mode-toggle {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+
+            #chatbot-container {
+                width: 300px;
+                height: 450px;
+                bottom: 80px;
+                right: 10px;
+            }
+
+            #chatbot-toggle {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-
-  <header>MPU PLATFORM STANDARD</header>
-  <button class="dark-mode-toggle" onclick="toggleDarkMode()">Dark Mode</button>
-
-  <div id="chatbot-widget">
-    <button id="chatbot-toggle">🤖 Chatbot starten</button>
-    <div id="chatbot-container">
-      <div id="chat-response">Willkommen beim Chatbot!</div>
-      <input type="text" id="chat-input" placeholder="Schreibe eine Nachricht...">
-      <button id="send-btn">Senden</button>
-    </div>
-  </div>
-
-  <main>
-    <div class="menu-container">
-      <div class="menu-item" onclick="showDescription('ablauf')">ABLAUF DER MPU</div>
-      <div class="menu-item" onclick="showDescription('kosten')">MPU KOSTEN PRÜFUNG UND VORBEREITUNG</div>
-      <div class="menu-item" onclick="showDescription('leistungstests')">LEISTUNGSTESTS</div>
-      <div class="menu-item" onclick="showDescription('mpu-qa')">MPU-APP: FRAGEN UND ANTWORTEN</div>
-      <div class="menu-item" onclick="showDescription('promille-rechner')">PROMILLE RECHNER</div>
-      <div class="menu-item" onclick="showDescription('mpu-quiz')">MPU QUIZ</div>
-      <div class="menu-item" onclick="showDescription('gutachtersimulator')">MPU SIMULATOR</div>
-      <div class="menu-item" onclick="showDescription('checkliste')">MPU - CHECKLISTE</div>
-      <div class="menu-item" onclick="showDescription('frageboegen')">MPU-FRAGEBÖGEN</div>
-      <div class="menu-item" onclick="showDescription('ki-assistent')">KI ASSISTENT</div>
+    <!-- Progress Bar - Neu -->
+    <div class="progress-container">
+        <div class="progress-bar" id="pageProgress"></div>
     </div>
 
-    <div class="content-container">
-      <div class="description" id="ablauf-description">
-        <h3>Ablauf der MPU</h3>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/unYcOXwR0mw?si=1MlxgNbx0Oni866o"
-          title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        <ul>
-          <li>Aufnahme (10 Minuten), Vorlage der Abstinenzbelege und Bescheinigung für die Vorbereitung.</li>
-          <li>Ausfüllen der Fragebögen (30 Minuten)</li>
-          <li>Medizinische Untersuchung (30 Minuten)</li>
-          <li>Reaktionstests (20 Minuten)</li>
-          <li>Psychologische Begutachtung (60 Minuten)</li>
-        </ul>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/-rDeGHZdois?si=CCdAMZsJohBxcDf5"
-          title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen></iframe>
-        <button class="button" onclick="window.open('https://chatgpt.com/g/g-675ae9d9e02c819197d84b01adf301ee-mpuassistent')">KI ASSISTENT</button>
-      </div>
-      <div class="description" id="kosten-description">
-        <h3>MPU Kosten Prüfung und Vorbereitung</h3>
-        <p>Details zu den Kosten der MPU sowie der Vorbereitung findest du hier.</p>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/bUFjK54oz3c?si=vnVMJUhSd2KGaERJ"
-          title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        <button class="button" onclick="window.open('https://chatgpt.com/g/g-675ae9d9e02c819197d84b01adf301ee-mpuassistent', '_blank')">KI-ASSISTENT ÖFFNEN</button>
-      </div>
-      <div class="description" id="leistungstests-description">
-        <h3>Leistungstests</h3>
-        <p>Hier findest du alle Leistungstests wie Reaktionstests und Konzentrationsübungen.</p>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/vcAJC0gfvRc?si=9jdXUb4B0ck9VKOA"
-          title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen></iframe>
-        <ul>
-          <p><button class="button" onclick="window.open('https://gamma.app/docs/MPUNEUREAKTIONSTEST-79vwbbrski77oor', '_blank')">REAKTIONSTESTS AUFRUFEN</button></p>
-          <p><button class="button" onclick="window.open('https://zaha175.github.io/FIGURENVERGLEICHSTEST/', '_blank')">FIGUREN TEST</button></p>
-          <p><button class="button" onclick="window.open('https://zaha175.github.io/Verkehrssituationstext/', '_blank')">VERKEHRSITUATIONSTEST</button></p>
-        </ul>
-      </div>
-      <div class="description" id="checkliste-description">
-        <h3>MPU - Checkliste</h3>
-        <p>Schritt für Schritt zur erfolgreichen MPU: Nutzen Sie unsere Checkliste, um den Überblick zu behalten und sich optimal vorzubereiten.</p>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/E9TID9YfLyY?si=THFP_EOaSzZsmfJz"
-          title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen></iframe>
-      </div>
-      <div class="description" id="mpu-qa-description">
-        <h3>MPU-App Fragen und Antworten</h3>
-        <p>Fragen und Antworten zur Vorbereitung.</p>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/yo7Fg_cT8BI?si=7cVKATzN449vilJR"
-          title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </ul>
-        <p><button class="button" onclick="window.open('https://zaha175.github.io/FRAGENUNDANTWORTEN/', '_blank')">MPU APP: FRAGEN UND ANTWORTEN</button><p>
-        <p><button class="button" onclick="window.open('https://zaha175.github.io/FRAGUNDANTWERKL-RUNGEN/', '_blank')">MPU APP: FRAGEN UND ANTWORTEN ERKLÄRT</button><p>
-        </ul>
-      </div>
-      <div class="description" id="ki-assistent-description">
-        <h3>KI-Assistent</h3>
-        <p>Der KI-Assistent ist bereit, dir bei allen MPU-Fragen zu helfen.</p>
-        <button class="button" onclick="window.open('https://chatgpt.com/g/g-675ae9d9e02c819197d84b01adf301ee-mpuassistent', '_blank')">KI-ASSISTENT ÖFFNEN</button>
-      </div>
-      <div class="description" id="promille-rechner-description">
-        <h3>Promille Rechner</h3>
-        <button class="button" onclick="window.open('https://zaha175.github.io/PROMILLERECHNERDE/', '_blank')">RECHNER STARTEN</button>
-      </div>
-      <div class="description" id="mpu-quiz-description">
-        <h3>MPU Quiz</h3>
-        <button class="button" onclick="window.open('https://zaha175.github.io/QUIZSUPERTOLL/', '_blank')">QUIZ STARTEN</button>
-      </div>
-      <div class="description" id="gutachtersimulator-description">
-        <h3>MPU Simulator</h3>
-        <p>Simulation eines MPU-Gesprächs.</p>
-      </div>
-      <div class="description" id="frageboegen-description">
-        <h3>MPU Fragebögen</h3>
-        <p>Übungen und Fragebögen für die MPU.</p>
-        <button class="button" onclick="window.open('https://gamma.app/docs/MPUNEUREAKTIONSTEST-79vwbbrski77oor', '_blank')">FRAGEBÖGEN ANZEIGEN</button>
-      </div>
-      <div class="description" id="header-description">
-        <h3>Willkommen bei der MPU PLATFORM</h3>
-        <p>Klicke auf die Menüpunkte, um mehr zu erfahren.</p>
-      </div>
+    <header>MPU PLATFORM PRO</header>
+    
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon"></i> Dark Mode
+    </button>
+
+    <!-- Back to Top Button - Neu -->
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
     </div>
-  </main>
-<script>
-      function showDescription(category) {
-  let descriptions = document.querySelectorAll('.description');
-  descriptions.forEach(description => {
-    description.classList.remove('active');
-  });
-  let description = document.getElementById(`${category}-description`);
-  if (description) {
-    description.classList.add('active');
-  }
 
-  let menuItems = document.querySelectorAll('.menu-item');
-  menuItems.forEach(item => {
-    item.classList.remove('active'); // Entfernt die Klasse von allen
-  });
-  let activeMenuItem = document.querySelector(`.menu-item[onclick="showDescription('${category}')"]`);
-  if (activeMenuItem) {
-    activeMenuItem.classList.add('active'); // Fügt die Klasse dem aktuellen hinzu
-  }
-}
+    <!-- Chatbot Widget -->
+    <div id="chatbot-widget">
+        <button id="chatbot-toggle">
+            <i class="fas fa-robot"></i> Chatbot starten
+        </button>
+        <div id="chatbot-container">
+            <div id="chat-header">
+                <h3>MPU-Assistent</h3>
+                <button id="close-chat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="chat-response">Willkommen beim MPU-Assistenten! Wie kann ich dir heute helfen?</div>
+            <input type="text" id="chat-input" placeholder="Schreibe eine Nachricht...">
+            <button id="send-btn">
+                <i class="fas fa-paper-plane"></i> Senden
+            </button>
+        </div>
+    </div>
 
-function toggleDarkMode() {
-  document.body.classList.toggle('dark-mode');
-  localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-}
+    <div class="container">
+        <main>
+            <div class="menu-container">
+                <div class="menu-item" onclick="showDescription('header')">
+                    <i class="fas fa-home"></i> WILLKOMMEN
+                </div>
+                <div class="menu-item" onclick="showDescription('ablauf')">
+                    <i class="fas fa-clipboard-list"></i> ABLAUF DER MPU
+                </div>
+                <div class="menu-item" onclick="showDescription('kosten')">
+                    <i class="fas fa-euro-sign"></i> MPU KOSTEN
+                </div>
+                <div class="menu-item" onclick="showDescription('leistungstests')">
+                    <i class="fas fa-tachometer-alt"></i> LEISTUNGSTESTS
+                </div>
+                <div class="menu-item" onclick="showDescription('mpu-qa')">
+                    <i class="fas fa-question-circle"></i> FRAGEN & ANTWORTEN
+                </div>
+                <div class="menu-item" onclick="showDescription('promille-rechner')">
+                    <i class="fas fa-wine-glass-alt"></i> PROMILLE RECHNER
+                </div>
+                <div class="menu-item" onclick="showDescription('mpu-quiz')">
+                    <i class="fas fa-gamepad"></i> MPU QUIZ & SPIELE
+                </div>
+                <div class="menu-item" onclick="showDescription('gutachtersimulator')">
+                    <i class="fas fa-user-tie"></i> MPU SIMULATOR
+                </div>
+                <div class="menu-item" onclick="showDescription('checkliste')">
+                    <i class="fas fa-tasks"></i> MPU - CHECKLISTE
+                </div>
+                <div class="menu-item" onclick="showDescription('frageboegen')">
+                    <i class="fas fa-file-alt"></i> MPU-FRAGEBÖGEN
+                </div>
+                <div class="menu-item" onclick="showDescription('ki-assistent')">
+                    <i class="fas fa-robot"></i> KI ASSISTENT
+                </div>
+            </div>
 
-// Lade Dark-Mode beim Start
-window.onload = () => {
-  if (localStorage.getItem('darkMode') === 'true') {
-    document.body.classList.add('dark-mode');
-  }
-  
+            <div class="content-container">
+                <!-- Ablauf der MPU -->
+                <div class="description" id="ablauf-description">
+                    <h3>ABLAUF DER MPU</h3>
+                    <iframe src="https://www.youtube.com/embed/unYcOXwR0mw?si=1MlxgNbx0Oni866o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    
+                    <h4 style="color: var(--primary-color); margin: 15px 0; font-size: 1.2rem;">Ablauf der MPU im Überblick:</h4>
+                    <ul>
+                        <li><strong>Aufnahme</strong> (10 Minuten) - Vorlage der Abstinenzbelege und Bescheinigung für die Vorbereitung.</li>
+                        <li><strong>Ausfüllen der Fragebögen</strong> (30 Minuten)</li>
+                        <li><strong>Medizinische Untersuchung</strong> (30 Minuten)</li>
+                        <li><strong>Reaktionstests</strong> (20 Minuten)</li>
+                        <li><strong>Psychologische Begutachtung</strong> (60 Minuten)</li>
+                    </ul>
+                    
+                    <iframe src="https://www.youtube.com/embed/-rDeGHZdois?si=CCdAMZsJohBxcDf5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    
+                    <button class="button" onclick="window.open('https://chatgpt.com/g/g-675ae9d9e02c819197d84b01adf301ee-mpuassistent', '_blank')">
+                        <i class="fas fa-robot"></i> KI ASSISTENT ÖFFNEN
+                    </button>
+                </div>
 
-  // Chatbot-Fenster öffnen/schließen
-    document.getElementById('chatbot-toggle').onclick = () => {
-      const container = document.getElementById('chatbot-container');
-      container.style.display = container.style.display === 'none' ? 'block' : 'none';
-      document.getElementById('chat-response').innerText = 'Der Chatbot ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.';
-    };
+                <!-- MPU Kosten -->
+                <div class="description" id="kosten-description">
+                    <h3>MPU KOSTEN PRÜFUNG UND VORBEREITUNG</h3>
+                    <p style="margin-bottom: 15px;">Details zu den Kosten der MPU sowie der Vorbereitung findest du hier:</p>
+                    
+                    <iframe src="https://www.youtube.com/embed/bUFjK54oz3c?si=vnVMJUhSd2KGaERJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    
+                    <button class="button" onclick="window.open('https://chatgpt.com/g/g-675ae9d9e02c819197d84b01adf301ee-mpuassistent', '_blank')">
+                        <i class="fas fa-robot"></i> KI-ASSISTENT ÖFFNEN
+                    </button>
+                </div>
 
-    // Chatbot deaktiviert – Platzhalterantwort
-    document.getElementById('send-btn').onclick = () => {
-      document.getElementById('chat-response').innerText = 'Der Chatbot ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.';
-     }
-};
-</script>
+                <!-- Leistungstests -->
+                <div class="description" id="leistungstests-description">
+                    <h3>LEISTUNGSTESTS</h3>
+                    <p style="margin-bottom: 15px;">Hier findest du alle Leistungstests wie Reaktionstests und Konzentrationsübungen:</p>
+                    
+                    <iframe src="https://www.youtube.com/embed/vcAJC0gfvRc?si=9jdXUb4B0ck9VKOA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    
+                    <button class="button" onclick="window.open('https://gamma.app/docs/MPUNEUREAKTIONSTEST-79vwbbrski77oor', '_blank')">
+                        <i class="fas fa-external-link-alt"></i> REAKTIONSTESTS AUFRUFEN
+                    </button>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">FIGURENVERGLEICHSTEST</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/FIGURENVERGLEICHSTEST/', '_blank')">
+                        <i class="fas fa-puzzle-piece"></i> FIGURENVERGLEICHSTEST 1
+                    </button>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/FIGURENVERGLEICHSTEST1/', '_blank')">
+                        <i class="fas fa-puzzle-piece"></i> FIGURENVERGLEICHSTEST 2
+                    </button>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/FIGURENVERGLEICHSTEST2/', '_blank')">
+                        <i class="fas fa-puzzle-piece"></i> FIGURENVERGLEICHSTEST 3
+                    </button>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">FARBENTEST</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/FARBENTEST1/', '_blank')">
+                        <i class="fas fa-palette"></i> FARBENTEST 1
+                    </button>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/FARBENTEST2/', '_blank')">
+                        <i class="fas fa-palette"></i> FARBENTEST 2
+                    </button>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/FARBENTEST3/', '_blank')">
+                        <i class="fas fa-palette"></i> FARBENTEST 3
+                    </button>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">VERKEHRSSITUATIONSTEST</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/Verkehrssituationstext/', '_blank')">
+                        <i class="fas fa-car"></i> VERKEHRSSITUATIONSTEST
+                    </button>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">MEHRFACHSITUATIONSTESTS</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/MERHFACHSITUATIONSTEST/', '_blank')">
+                        <i class="fas fa-tasks"></i> MEHRFACHSITUATIONSTEST 1
+                    </button>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/MEHRFACHSITUATIONSTEST1/', '_blank')">
+                        <i class="fas fa-tasks"></i> MEHRFACHSITUATIONSTEST 2
+                    </button>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/MEHRFACHSITUATIONSTEST2/', '_blank')">
+                        <i class="fas fa-tasks"></i> MEHRFACHSITUATIONSTEST 3
+                    </button>
+                </div>
+
+                <!-- MPU Checkliste -->
+                <div class="description" id="checkliste-description">
+                    <h3>MPU - CHECKLISTE</h3>
+                    <p style="margin-bottom: 15px;">Schritt für Schritt zur erfolgreichen MPU: Nutzen Sie unsere Checkliste, um den Überblick zu behalten und sich optimal vorzubereiten.</p>
+                    
+                    <iframe src="https://www.youtube.com/embed/xmXUXZ81PxA?si=SINLc6pc2RB6XelJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">KI-ASSISTENT</h4>
+                    <p style="margin-bottom: 15px;">Der KI-Assistent ist bereit, dir bei allen MPU-Fragen zu helfen.</p>
+                    
+                    <button class="button" onclick="window.open('https://chatgpt.com/g/g-675ae9d9e02c819197d84b01adf301ee-mpuassistent', '_blank')">
+                        <i class="fas fa-robot"></i> KI-ASSISTENT ÖFFNEN
+                    </button>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">KI-ASSISTENT RICHTIG BENUTZEN:</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/KICHATBOTASSISTENT/', '_blank')">
+                        <i class="fas fa-info-circle"></i> KICHATBOTASSISTENT ÖFFNEN
+                    </button>
+                    
+                    <iframe src="https://zaha175.github.io/KICHATBOTASSISTENT/"></iframe>
+                </div>
+
+                <!-- MPU Fragen und Antworten -->
+                <div class="description" id="mpu-qa-description">
+                    <h3>MPU-APP FRAGEN UND ANTWORTEN</h3>
+                    <p style="margin-bottom: 15px;">FRAGEN UND ANTWORTEN ZUR VORBEREITUNG</p>
+                    
+                    <iframe src="https://www.youtube.com/embed/yo7Fg_cT8BI?si=7cVKATzN449vilJR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">KONTROLLIERTES TRINKEN</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/CONTROLLIERTES-TRINKEN/', '_blank')">
+                        <i class="fas fa-question-circle"></i> MPU APP: FRAGEN UND ANTWORTEN
+                    </button>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">ABSTINENZ</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/FRAGENUNDANTWORTEN/', '_blank')">
+                        <i class="fas fa-question-circle"></i> MPU APP: FRAGEN UND ANTWORTEN
+                    </button>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/FRAGUNDANTWERKL-RUNGEN/', '_blank')">
+                        <i class="fas fa-info-circle"></i> MPU APP: FRAGEN UND ANTWORTEN ERKLÄRT
+                    </button>
+                </div>
+
+                <!-- KI Assistent -->
+                <div class="description" id="ki-assistent-description">
+                    <h3>KI-ASSISTENT</h3>
+                    <p style="margin-bottom: 15px;">Der KI-Assistent ist bereit, dir bei allen MPU-Fragen zu helfen.</p>
+                    
+                    <button class="button" onclick="window.open('https://chatgpt.com/g/g-675ae9d9e02c819197d84b01adf301ee-mpuassistent', '_blank')">
+                        <i class="fas fa-robot"></i> KI-ASSISTENT ÖFFNEN
+                    </button>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">KI-ASSISTENT RICHTIG BENUTZEN:</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/KICHATBOTASSISTENT/', '_blank')">
+                        <i class="fas fa-info-circle"></i> KICHATBOTASSISTENT ÖFFNEN
+                    </button>
+                    
+                    <iframe src="https://zaha175.github.io/KICHATBOTASSISTENT/"></iframe>
+                </div>
+
+                <!-- Promille Rechner -->
+                <div class="description" id="promille-rechner-description">
+                    <h3>ALKOHOLMENGE UND PROMILLERECHNER</h3>
+                    
+                    <h4 style="color: var(--primary-color); margin: 15px 0; font-size: 1.2rem;">ALKOHOLKONSUMRECHNER MIT DIAGRAMM</h4>
+                    <iframe src="https://zaha175.github.io/MENGENACHPROMILLE/"></iframe>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/MENGENACHPROMILLE/', '_blank')">
+                        <i class="fas fa-calculator"></i> ALKOHOLKONSUMRECHNER MIT DIAGRAMM
+                    </button>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">PROMILLERECHNER MIT DIAGRAMM</h4>
+                    <iframe src="https://zaha175.github.io/PROMILLERECHNERDE/"></iframe>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/PROMILLERECHNERDE/', '_blank')">
+                        <i class="fas fa-wine-glass-alt"></i> PROMILLERECHNER MIT DIAGRAMM
+                    </button>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">LEBENSALTER RECHNER</h4>
+                    <iframe src="https://zaha175.github.io/LEBENSALTER-RECHNER/"></iframe>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/LEBENSALTER-RECHNER/', '_blank')">
+                        <i class="fas fa-calendar-alt"></i> LEBENSALTER RECHNER MIT DIAGRAMM
+                    </button>
+                </div>
+
+                <!-- MPU Quiz -->
+                <div class="description" id="mpu-quiz-description">
+                    <h3>MPU QUIZ UND SPIELE</h3>
+                    
+                    <h4 style="color: var(--primary-color); margin: 15px 0; font-size: 1.2rem;">MPU QUIZ</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/QUIZ1/', '_blank')">
+                        <i class="fas fa-question-circle"></i> QUIZ 1 STARTEN
+                    </button>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/QUIZ2/', '_blank')">
+                        <i class="fas fa-question-circle"></i> QUIZ 2 STARTEN
+                    </button>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/QUIZSUPERTOLL/', '_blank')">
+                        <i class="fas fa-question-circle"></i> QUIZ 3 STARTEN
+                    </button>
+                    
+                    <iframe src="https://zaha175.github.io/QUIZSUPERTOLL/"></iframe>
+                    
+                    <h4 style="color: var(--primary-color); margin: 20px 0 15px; font-size: 1.2rem;">MPU SPIELE</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/SPIEL1DE/', '_blank')">
+                        <i class="fas fa-gamepad"></i> SPIEL 1 STARTEN
+                    </button>
+                    
+                    <iframe src="https://zaha175.github.io/SPIEL1DE/"></iframe>
+                </div>
+
+                <!-- MPU Simulator -->
+                <div class="description" id="gutachtersimulator-description">
+                    <h3>MPU SIMULATOR</h3>
+                    <p style="margin-bottom: 15px;">SIMULATION EINES MPU GESPRÄCHS</p>
+                    
+                    <button class="button" onclick="window.open('https://chatgpt.com/g/g-67647a1f4a488191940c4b0c92a4f2ea-k-i-kommandant-fur-mpu-abstinenz', '_blank')">
+                        <i class="fas fa-user-tie"></i> ÖFFNE SIMULATOR KI
+                    </button>
+                    
+                    <img src="https://cdn.gamma.app/fhpleqvbjim2f32/generated-images/ppTJoMZMeGPnTtdZU3_79.jpg" alt="MPU Simulation" style="width: 100%; height: auto; margin: 20px 0;">
+                    
+                    <h4 style="color: var(--primary-color); margin: 15px 0; font-size: 1.2rem;">KI SIMULATOR RICHTIG BENUTZEN:</h4>
+                    <button class="button" onclick="window.open('https://zaha175.github.io/KICHATBOTDEUTSCH/', '_blank')">
+                        <i class="fas fa-info-circle"></i> KICHATBOT ÖFFNEN
+                    </button>
+                    
+                    <iframe src="https://zaha175.github.io/KICHATBOTDEUTSCH/"></iframe>
+                </div>
+
+                <!-- MPU Fragebögen -->
+                <div class="description" id="frageboegen-description">
+                    <h3>MPU FRAGEBÖGEN</h3>
+                    <p style="margin-bottom: 15px;">ÜBUNGEN UND FRAGEBÖGEN FÜR DIE MPU</p>
+                    
+                    <button class="button" onclick="window.open('https://gamma.app/docs/MPUNEUREAKTIONSTEST-79vwbbrski77oor', '_blank')">
+                        <i class="fas fa-file-alt"></i> FRAGEBÖGEN ANZEIGEN
+                    </button>
+                </div>
+
+                <!-- Willkommen -->
+                <div class="description" id="header-description">
+                    <h3>WILLKOMMEN BEI DER MPU PLATFORM</h3>
+                    
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/ZATbbvXcvE8?si=VlF7WCt6Fu2XbSt-" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    
+                    <p style="margin: 20px 0; text-align: center; font-size: 1.1rem;">Klicke auf die Menüpunkte, um mehr zu erfahren.</p>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 25px;">
+                        <button class="button" style="max-width: 250px;" onclick="showDescription('ablauf')">
+                            <i class="fas fa-clipboard-list"></i> Ablauf der MPU
+                        </button>
+                        <button class="button" style="max-width: 250px;" onclick="showDescription('leistungstests')">
+                            <i class="fas fa-tachometer-alt"></i> Leistungstests
+                        </button>
+                        <button class="button" style="max-width: 250px;" onclick="showDescription('ki-assistent')">
+                            <i class="fas fa-robot"></i> KI-Assistent
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Show description function
+        function showDescription(category) {
+            let descriptions = document.querySelectorAll('.description');
+            descriptions.forEach(description => {
+                description.classList.remove('active');
+            });
+            
+            let description = document.getElementById(`${category}-description`);
+            if (description) {
+                description.classList.add('active');
+                // Scroll to top of description on mobile
+                if (window.innerWidth <= 900) {
+                    description.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            let menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            let activeMenuItem = document.querySelector(`.menu-item[onclick="showDescription('${category}')"]`);
+            if (activeMenuItem) {
+                activeMenuItem.classList.add('active');
+            }
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            
+            // Update dark mode toggle icon
+            const darkModeToggle = document.querySelector('.dark-mode-toggle');
+            if (document.body.classList.contains('dark-mode')) {
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            } else {
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            }
+        }
+
+        // Back to top function
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Progress Bar
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("pageProgress").style.width = scrolled + "%";
+            
+            // Show/hide back to top button
+            const backToTop = document.getElementById('backToTop');
+            if (winScroll > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        };
+
+        // Chatbot functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatbotToggle = document.getElementById('chatbot-toggle');
+            const chatbotContainer = document.getElementById('chatbot-container');
+            const closeChat = document.getElementById('close-chat');
+            const sendBtn = document.getElementById('send-btn');
+            const chatInput = document.getElementById('chat-input');
+            const chatResponse = document.getElementById('chat-response');
+            
+            chatbotToggle.addEventListener('click', () => {
+                chatbotContainer.style.display = chatbotContainer.style.display === 'none' ? 'flex' : 'none';
+            });
+            
+            closeChat.addEventListener('click', () => {
+                chatbotContainer.style.display = 'none';
+            });
+            
+            sendBtn.addEventListener('click', sendMessage);
+            
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    // Add user message
+                    chatResponse.innerHTML += `
+                        <div style="margin-bottom: 10px;">
+                            <div style="font-weight: bold; color: var(--primary-color);">Du:</div>
+                            <div>${message}</div>
+                        </div>`;
+                    
+                    chatInput.value = '';
+                    
+                    // Auto scroll to bottom
+                    chatResponse.scrollTop = chatResponse.scrollHeight;
+                    
+                    // Simulate bot response
+                    setTimeout(() => {
+                        chatResponse.innerHTML += `
+                            <div style="margin-bottom: 10px;">
+                                <div style="font-weight: bold; color: var(--primary-color);">MPU-Assistent:</div>
+                                <div>Der Chatbot ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut oder nutzen Sie den KI-Assistenten.</div>
+                            </div>`;
+                        
+                        chatResponse.scrollTop = chatResponse.scrollHeight;
+                    }, 1000);
+                }
+            }
+        });
+
+        // Initialize page
+        window.onload = () => {
+            // Set dark mode from localStorage
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.dark-mode-toggle').innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            }
+            
+            // Show default description
+            showDescription('header');
+            
+            // Initialize chatbot container display style
+            document.getElementById('chatbot-container').style.display = 'none';
+        };
+    </script>
 </body>
-
 </html>
